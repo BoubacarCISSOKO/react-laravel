@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/inscription/patient', [App\Http\Controllers\PatientController::class, 'create'])->name('create');
+Route::post('/enregister/patient', [App\Http\Controllers\PatientController::class, 'store'])->name('store');
