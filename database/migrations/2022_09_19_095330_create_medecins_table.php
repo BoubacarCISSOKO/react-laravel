@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePatientsTable extends Migration
+class CreateMedecinsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,11 @@ class CreatePatientsTable extends Migration
      */
     public function up()
     {
-        Schema::disableForeignKeyConstraints();
-        Schema::create('patients', function (Blueprint $table) {
+        Schema::create('medecins', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nom');
             $table->string('prenom');
-            $table->string('age');
-            $table->string('sex');
-            $table->unsignedBigInteger('medecin_id');
-            $table->foreign('medecin_id')
-            ->references('id')
-            ->on('medecins')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
+            $table->string('specialite');
             $table->timestamps();
         });
     }
@@ -37,6 +29,6 @@ class CreatePatientsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('patients');
+        Schema::dropIfExists('medecins');
     }
 }

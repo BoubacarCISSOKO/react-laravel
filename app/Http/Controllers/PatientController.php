@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Patient;
+use App\Models\Medecin;
 class PatientController extends Controller
 {
     /**
@@ -14,7 +15,9 @@ class PatientController extends Controller
      */
     public function index()
     {
-        //
+        return view('patient.index', [
+            'patients' => Patient::orderBy('created_at', 'desc')->paginate(10)
+        ]);
     }
 
     /**
@@ -25,7 +28,8 @@ class PatientController extends Controller
     public function create()
     {
         //
-        return view("patient.create");
+        $nomMedecins = Medecin::all();
+        return view("patient.create", compact('nomMedecins'));
     }
 
     /**
@@ -40,13 +44,12 @@ class PatientController extends Controller
         $patients = new Patient;
         $patients->nom = $request->nom;
         $patients->prenom = $request->prenom;
-        $patients->adresse = $request->adresse;
-        $patients->ville = $request->ville;
-        $patients->telephone = $request->telephone;
-        $patients->dateNaiss = $request->dateNaiss;
-
+        $patients->age = $request->age;
+        $patients->sex = $request->sex;
+        $patients->medecin_id = $request->medecin_id;
+        
         $patients->save(); 
-        return back()->with("added", "Patient bien inscrit");
+        return redirect()->route('index')->with("added", "Patient bien inscrit");
     }
 
     /**
@@ -55,9 +58,15 @@ class PatientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Patient $patient)
     {
         //
+    
+        $medecin = Patient::join('medecins', 'patients.medecin_id', '=','medecins.id' )
+                        ->where('patients.medecin_id', $patient->id)
+                        ->get();
+                        
+        return view("patient.show", compact('patient','medecin'));
     }
 
     /**
@@ -66,9 +75,11 @@ class PatientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Patient $patient)
     {
         //
+        $nomMedecins = Medecin::all();
+        return view("patient.edit", compact('patient','nomMedecins'));
     }
 
     /**
@@ -78,9 +89,18 @@ class PatientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Patient $patient)
     {
         //
+        $patient->nom = $request->nom;
+        $patient->prenom = $request->prenom;
+        $patient->age = $request->age;
+        $patient->sex = $request->sex;
+        $patient->medecin_id = $request->medecin_id;
+        
+        $patient->save(); 
+        return redirect()->route('index')->with("added", "Patient bien modifié");
+
     }
 
     /**
